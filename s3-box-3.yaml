@@ -187,14 +187,14 @@ voice_assistant:
         if (message == "Unexpected error during wake-word-detection") {
           id(restart_script).execute();
         } 
-    - text_sensor.template.publish: 
+    - text_sensor.template.publish:
         id: line4
         state: !lambda return code;
-    - text_sensor.template.publish: 
+    - text_sensor.template.publish:
         id: line5
         state: !lambda return message;
   on_stt_end:
-    - text_sensor.template.publish: 
+    - text_sensor.template.publish:
         id: line1
         state: !lambda return x;
   on_client_connected:
@@ -212,7 +212,7 @@ voice_assistant:
           switch.is_on: use_wake_word
         then:
           - voice_assistant.stop:
-          - light.turn_off: led  
+          - light.turn_off: led
 
 script:
   - id: reset_led
@@ -226,7 +226,6 @@ script:
                 id: led
                 brightness: 25%
                 effect: none
-            - display.page.show: page0
             - component.update: my_display
           else:
             - light.turn_off: led
@@ -237,10 +236,10 @@ script:
     then:
       - voice_assistant.stop
       - delay: 1s
-      - text_sensor.template.publish: 
+      - text_sensor.template.publish:
           id: line4
           state: " "
-      - text_sensor.template.publish: 
+      - text_sensor.template.publish:
           id: line5
           state: " "
       - voice_assistant.start_continuous
@@ -278,9 +277,9 @@ switch:
 
 external_components:
   # - source: github://pr#5230
-    source: github://kiklhorn/esphome
-    components: esp_adf
-    refresh: 0s
+  source: github://kiklhorn/esphome
+  components: esp_adf
+  refresh: 0s
 
 esp_adf:
   # board: esp32s3box3
@@ -289,8 +288,6 @@ esp_adf:
 psram:
   mode: octal
   speed: 120MHz
-
-
 
 font:
   - file: "gfonts://Roboto Condensed"
@@ -301,34 +298,35 @@ font:
 text_sensor:
   - id: line0
     platform: template
-    on_value: 
+    on_value:
       then:
         - component.update: my_display
   - id: line1
     platform: template
-    on_value: 
+    on_value:
       then:
         - component.update: my_display
   - id: line2
     platform: template
-    on_value: 
+    on_value:
       then:
         - component.update: my_display
   - id: line3
     platform: template
-    on_value: 
+    on_value:
       then:
         - component.update: my_display
   - id: line4
     platform: template
-    on_value: 
+    on_value:
       then:
-        - component.update: my_display      
+        - component.update: my_display
   - id: line5
     platform: template
-    on_value: 
+    on_value:
       then:
-        - component.update: my_display      
+        - component.update: my_display
+
 image:
   - file: mdi:home-assistant
     id: idle
@@ -339,10 +337,10 @@ image:
   - file: mdi:comment-check-outline
     id: speaking
     resize: 240x240
+
 spi:
   clk_pin: GPIO7
   mosi_pin: GPIO6
-  
 
 display:
   - platform: ili9xxx
@@ -351,7 +349,6 @@ display:
     id: my_display
     cs_pin: GPIO5
     dc_pin: GPIO4
-    # reset_pin: GPIO48 #Negation needed... ignore 
     pages:
       - id: page0
         lambda: |-
@@ -364,47 +361,3 @@ display:
           it.image(40, 0, id(speaking));
       - id: page3
         lambda: |-
-
-    # https://esphome.io/api/light__state_8cpp_source
-    # lambda: |-
-    #   for(auto i = 0; i<240; i++) {it.horizontal_line(0,i,320, my_blue.fade_to_white(i));}
-    #   it.rectangle(0, 0, it.get_width(), it.get_height(),color_red);
-    #   it.printf(45, 10, id(font1), "ESP32-S3-BOX-3");
-    #   auto ledcolor = Color(id(led).remote_values.get_red()*255, id(led).remote_values.get_green()*255, id(led).remote_values.get_blue()*255);
-    #   bool ledstatus = id(led).remote_values.get_state();
-    #   int x = 2, y = 43, offs = 34;
-    #   it.image(5, 5, id(alert));
-    #   it.printf(30, 0, id(font1), "%s", id(line0).state.c_str());
-    #   it.printf(x, y, id(font1), "%s", id(line1).state.c_str());
-    #   it.printf(x, y=y+offs, id(font1), "%s", id(line2).state.c_str());
-    #   it.printf(x, y=y+offs, id(font1), "%s", id(line3).state.c_str());
-    #   it.printf(x, y=y+offs, id(font1), color_red, "%s", id(line4).state.c_str());
-    #   it.printf(x, y=y+offs, id(font1), color_red, "%s", id(line5).state.c_str());
-    #  #it.filled_circle(25, 25, 15, ledstatus ? ledcolor : color_black);
-
-color:
-  - id: color_red
-    red: 1
-    green: 0
-    blue: 0
-  - id: color_green
-    red: 0
-    green: 1
-    blue: 0
-  - id: color_black
-    red: 0
-    green: 0
-    blue: 0  
-  - id: my_blue
-    blue: 100%
-  - id: my_red
-    red: 100%
-  - id: my_green
-    green: 70%
-  - id: my_white
-    red: 100%
-    blue: 100%
-    green: 100%
-  - id: my_yellow
-    hex: ffff00
-      

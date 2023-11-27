@@ -219,14 +219,19 @@ script:
     then:
       - if:
           condition:
-            switch.is_on: use_wake_word
+            - switch.is_on: use_wake_word
+            - switch.is_on: use_listen_light
           then:
             - light.turn_on:
                 id: led
                 brightness: 25%
                 effect: none
+            - display.page.show: page0
+            - component.update: my_display
           else:
             - light.turn_off: led
+            - display.page.show: page3
+            - component.update: my_display
 
   - id: restart_script
     then:
@@ -259,6 +264,16 @@ switch:
     on_turn_off:
       - voice_assistant.stop
       - lambda: id(va).set_use_wake_word(false);
+      - script.execute: reset_led
+  - platform: template
+    name: Use Listen Light
+    id: use_listen_light
+    optimistic: true
+    restore_mode: RESTORE_DEFAULT_ON
+    entity_category: config
+    on_turn_on:
+      - script.execute: reset_led
+    on_turn_off:
       - script.execute: reset_led
 
 external_components:
@@ -347,6 +362,8 @@ display:
       - id: page2
         lambda: |-
           it.image(40, 0, id(speaking));
+      - id: page3
+        lambda: |-
 
     # https://esphome.io/api/light__state_8cpp_source
     # lambda: |-
